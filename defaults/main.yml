@@ -1,0 +1,26 @@
+---
+# defaults file for ansible-twitter-backup
+
+# The variables below are used to define
+# default arguments for when cron jobs
+# that invoke the twitter backup script are run. 
+# They are ignored if no cron jobs are defined.
+# They can be overridden by defining
+# a corresponding variable in one of the 
+# named crons in twitter_cron_list below. 
+twitter_cron_default_minute: "0"
+twitter_cron_default_hour: "21"
+twitter_cron_default_day: "*"
+twitter_cron_default_month: "*"
+twitter_cron_default_weekday: "2,6" 
+
+#twitter_cron_list:
+#    - name: Monthly
+#      handle: twitter_handle_to_back_up 
+#      log_path: /path/to/log
+#      user: user_whose_crontab_this_should_be_in
+#      minute: "0"
+#      hour: "0"
+#      day: "1"
+#      month: "*/4"
+#      weekday: "*"

@@ -1,0 +1,34 @@
+---
+# tasks file for ansible-twitter-backup
+#
+- name: Ensure that Ruby pre-reqs are installed.
+  yum:
+    name:
+      - ruby-devel
+      - rubygems
+    state: present
+
+- name: Install t
+  gem:
+    name: t
+    state: present
+
+- name: Install Twitter backup script
+  copy:
+    src: backup.sh
+    dest: "{{ twitter_backup_script_path }}"
+
+# We use a login shell here so that the RVM path is set up correctly
+# (assuming that we want to switch to using RVM at some point;
+# this is more or less a future-proofing precaution).
+- name: Define Twitter backup crontabs
+  cron:
+    name: "{{ item.name }}"
+    minute: "{% if item.minute is defined %}{{ item.minute }}{% else %}{{ twitter_cron_default_minute }}{% endif %}"
+    hour: "{% if item.hour is defined %}{{ item.hour }}{% else %}{{ twitter_cron_default_hour }}{% endif %}"
+    day: "{% if item.day is defined %}{{ item.day }}{% else %}{{ twitter_cron_default_day }}{% endif %}"
+    month: "{% if item.month is defined %}{{ item.month }}{% else %}{{ twitter_cron_default_month }}{% endif %}"
+    weekday: "{% if item.weekday is defined %}{{ item.weekday }}{% else %}{{ twitter_cron_default_weekday }}{% endif %}"
+    user: "{{ item.user }}"
+    job: "/bin/bash -l -c '{{ twitter_backup_script_path }} \"{{ item.handle }}\" 2>&1 {{ item.log_path }}'"
+  with_items: "{{ twitter_cron_list }}"
